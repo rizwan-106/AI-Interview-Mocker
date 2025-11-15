@@ -20,16 +20,16 @@ import {
 import { useSelector } from "react-redux";
 
 const InterviewFeedback = () => {
-  const { id } = useParams();
+  // const { id } = useParams();
+  const { interviewId } = useParams();
+
   const navigate = useNavigate();
   const { allUserInterviews } = useSelector((store) => store.interview);
   const [openQuestions, setOpenQuestions] = useState({});
 
   // Mock data - in real app, you'd fetch this based on the ID
   const interviews = allUserInterviews;
-
-  const interview = interviews.find((interview) => interview._id === id);
-
+  const interview = interviews.find((interview) => interview.id === interviewId);
   // If interview not found, show error message
   if (!interview) {
     return (
@@ -53,8 +53,16 @@ const InterviewFeedback = () => {
   }
 
   const calculateOverallRating = (results) => {
-    const totalRating = results.reduce((sum, result) => sum + result.rating, 0);
-    return Math.round(totalRating / results.length);
+    if (!results || results.length === 0) return 0;
+    let validRatings = results
+      .map((res) => Number(res.rating))
+      .filter((num) => !isNaN(num)); // ignore undefined or invalid ratings
+
+    if (validRatings.length === 0) return 0;
+
+    const total = validRatings.reduce((sum, r) => sum + r, 0);
+
+    return Math.round(total / validRatings.length);
   };
 
   const formatDate = (dateString) => {
@@ -284,7 +292,7 @@ const InterviewFeedback = () => {
                                     result.rating
                                   )} border text-xs`}
                                 >
-                                  {result.rating}/10
+                                  {result.rating ? result.rating : 0}/10
                                 </Badge>
                                 {openQuestions[index] ? (
                                   <ChevronUp className="h-4 w-4 text-slate-500" />

@@ -15,7 +15,7 @@ public interface InterviewRepository extends MongoRepository<Interview, ObjectId
 
 	@Query("{'user.$id': ?0}")
 	List<Interview> findByUserId(ObjectId userId);
-	
+
 	@Query(value = "{'user.$id': ?0}", sort = "{'createdAt': -1}")
 	List<Interview> findByUserIdOrderByCreatedAtDesc(ObjectId userId);
 }

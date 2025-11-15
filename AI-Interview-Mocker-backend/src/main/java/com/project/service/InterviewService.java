@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
-import org.springdoc.core.converters.models.Sort;
 import org.springframework.stereotype.Service;
 
 import com.project.dto.request.InterviewRequest;
@@ -105,7 +104,6 @@ public class InterviewService {
 
 			// Save updated interview
 			Interview savedInterview = interviewRepo.save(interview);
-			System.out.println("Feedback and rating updated successfully for interview: {} " + interviewId);
 
 			// Convert to response DTO
 			return InterviewMapper.toResponse(savedInterview);

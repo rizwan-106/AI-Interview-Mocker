@@ -24,24 +24,19 @@ const InterviewDashboard = () => {
   usegetAllUserInterviews();
 
   const calculateOverallRating = (results) => {
-    // Check if results array is empty or undefined
-    if (!results || results.length === 0) {
-      return 0;
-    }
-    
-    // Filter out invalid ratings and calculate total
-    const validRatings = results.filter(result => 
-      result && result.rating && !isNaN(result.rating)
-    );
-    
-    // If no valid ratings found, return 0
-    if (validRatings.length === 0) {
-      return 0;
-    }
-    
-    const totalRating = validRatings.reduce((sum, result) => sum + result.rating, 0);
-    return Math.round(totalRating / validRatings.length);
-  };
+  if (!results || results.length === 0) return 0;
+
+  let validRatings = results
+    .map((res) => Number(res.rating))
+    .filter((num) => !isNaN(num));
+
+  if (validRatings.length === 0) return 0;
+
+  const total = validRatings.reduce((sum, r) => sum + r, 0);
+
+  return Math.round(total / validRatings.length);
+};
+
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -237,7 +232,8 @@ const InterviewDashboard = () => {
               <p className="text-slate-500 mb-6">
                 Start your first interview to see your progress here
               </p>
-              <Button className="cursor-pointer bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+              <Button className="cursor-pointer bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                onClick={() => navigate('/interview')}>
                 Start Interview
               </Button>
             </div>

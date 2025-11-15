@@ -104,7 +104,6 @@ public class InterviewController {
 			response.put("message", "Feedback and rating updated successfully");
 			response.put("interview", updatedInterview);
 
-			System.out.println(response);
 			return ResponseEntity.ok(response);
 
 		} catch (NoSuchElementException e) {
