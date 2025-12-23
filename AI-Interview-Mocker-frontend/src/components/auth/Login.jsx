@@ -1,8 +1,8 @@
 import { Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import {  useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -23,12 +23,28 @@ const Login = () => {
     email: "",
     password: "",
   });
+
   function changeEventHandler(e) {
     setInput({ ...input, [e.target.name]: e.target.value });
   }
 
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          dispatch(setUser(null));
+          navigate("/login")
+        }
+        return Promise.reject(error)
+      }
+    )
+    return () => axios.interceptors.response.eject(interceptor);
+  }, [dispatch, navigate])
+
+
   async function submitHandler(e) {
-    e.preventDefault(); 
+    e.preventDefault();
 
     try {
       setLoading(true);
@@ -36,7 +52,7 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
-      if (res.status==='200'|| res.status===200) {
+      if (res.status === 200) {
         dispatch(setUser(res.data.user));
         navigate('/')
         toast.success(res.data.message || "Login successful");

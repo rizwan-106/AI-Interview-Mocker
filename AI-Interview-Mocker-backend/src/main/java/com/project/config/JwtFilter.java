@@ -59,12 +59,12 @@ public class JwtFilter extends OncePerRequestFilter {
 		String token = null;
 		String userId = null;
 		
-		// 1️⃣ Using Authorization with Bearer<token> -> localStorage
+		// 1️ Using Authorization with Bearer<token> -> localStorage
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
 			token = authHeader.substring(7);
 		}
 		
-		// 2️⃣ If not found in header, try to fetch from cookies
+		// 2️ If not found in header, try to fetch from cookies
 		if (token == null && request.getCookies() != null) {
 			for (Cookie cookie : request.getCookies()) {
 				if ("token".equals(cookie.getName())) {
@@ -112,6 +112,12 @@ public class JwtFilter extends OncePerRequestFilter {
 					);
 					authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 					SecurityContextHolder.getContext().setAuthentication(authToken);
+				}else {
+					SecurityContextHolder.clearContext();
+				    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				    response.setContentType("application/json");
+				    response.getWriter().write("{\"error\":\"Token expired\"}");
+				    return;
 				}
 			} catch (Exception e) {
 				logger.error("Error during authentication: " + e.getMessage());

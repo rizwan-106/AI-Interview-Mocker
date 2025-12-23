@@ -192,7 +192,7 @@ Ensure questions are practical, relevant to the job title and description, and c
                 </CardHeader>
 
                 <CardContent className="p-8">
-                  <div onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Job Information */}
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold text-slate-700 flex items-center gap-2">
@@ -362,13 +362,10 @@ Ensure questions are practical, relevant to the job title and description, and c
                         ))}
                       </RadioGroup>
                     </div>
-
                     {/* Interview Duration */}
-
                     {/* Submit Button */}
                     <div className="pt-6 border-t border-slate-200">
                       <Button
-                        onClick={handleSubmit}
                         disabled={
                           loading ||
                           !formData.jobTitle ||
@@ -393,11 +390,10 @@ Ensure questions are practical, relevant to the job title and description, and c
                         )}
                       </Button>
                     </div>
-                  </div>
+                  </form>
                 </CardContent>
               </Card>
             </div>
-
             {/* Features Sidebar */}
             <div className="space-y-6">
               <Card className="bg-white border border-slate-200 rounded-2xl shadow-lg">
@@ -426,7 +422,6 @@ Ensure questions are practical, relevant to the job title and description, and c
                   ))}
                 </CardContent>
               </Card>
-
               <Card className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="text-center space-y-3">
@@ -451,5 +446,5 @@ Ensure questions are practical, relevant to the job title and description, and c
     </div>
   );
 };
-
 export default InterviewSetupPage;
+

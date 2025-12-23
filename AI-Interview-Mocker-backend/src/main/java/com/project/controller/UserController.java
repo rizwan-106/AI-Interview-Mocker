@@ -33,8 +33,8 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/user")
-//@CrossOrigin("*")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin("*")
+//@CrossOrigin(origins = "http://localhost:5173")
 
 public class UserController {
 

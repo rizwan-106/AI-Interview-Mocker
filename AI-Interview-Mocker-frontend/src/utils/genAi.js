@@ -7,7 +7,7 @@ async function genAI(prompt) {
   // const prompt = `jobTitle: ${jobTitle}, company: ${company}, jobDescription: ${jobDescription}, skills: ${skills}, difficultyLevel: ${difficulty}, experience: ${experience}. Based on this information, generate five interview questions and answers in JSON format. Use fields "question" and "answer".`;
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash-lite",
       // model: "gemini-1.5-pro-latest",
       contents: prompt,
     });

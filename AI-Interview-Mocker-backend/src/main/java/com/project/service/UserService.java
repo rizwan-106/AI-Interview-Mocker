@@ -102,7 +102,7 @@ public class UserService {
 				cookie.setHttpOnly(true);
 				cookie.setSecure(false); // 🚨 prod me true karna (https)
 				cookie.setPath("/");
-				cookie.setMaxAge(24 * 60 * 60); // 1 day
+				cookie.setMaxAge(24 * 60 * 60);
 				response.addCookie(cookie);
 
 				Map<String, Object> userData = new HashMap<>();
