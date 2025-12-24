@@ -22,48 +22,44 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-	
+
 	@Autowired
 	private JwtUtil jwtUtil;
-	
+
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
-	
+
 	@Autowired
 	private TokenBlacklistService tokenBlacklistService;
-	
+
 	// Public endpoints that don't require JWT authentication
-	private static final List<String> PUBLIC_ENDPOINTS = Arrays.asList(
-		"/api/v1/user/signup",
-		"/api/v1/user/signin",
-		"/swagger-ui",
-		"/v3/api-docs",
-		"/swagger-resources",
-		"/webjars"
-	);
-	
+	private static final List<String> PUBLIC_ENDPOINTS = Arrays.asList("/api/v1/user/signup", "/api/v1/user/signin",
+			"/swagger-ui", "/v3/api-docs", "/swagger-resources", "/webjars");
+
 	/**
 	 * Skip JWT filter for public endpoints
 	 */
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		
 		String path = request.getRequestURI();
 		return PUBLIC_ENDPOINTS.stream().anyMatch(path::startsWith);
 	}
-	
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		
-		String authHeader = request.getHeader("Authorization"); // For Local Storage with "Authorization": Bearer <token>
+
+		String authHeader = request.getHeader("Authorization"); // For Local Storage with "Authorization": Bearer
+																// <token>
 		String token = null;
 		String userId = null;
-		
+
 		// 1️ Using Authorization with Bearer<token> -> localStorage
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
 			token = authHeader.substring(7);
 		}
-		
+
 		// 2️ If not found in header, try to fetch from cookies
 		if (token == null && request.getCookies() != null) {
 			for (Cookie cookie : request.getCookies()) {
@@ -73,13 +69,13 @@ public class JwtFilter extends OncePerRequestFilter {
 				}
 			}
 		}
-		
+
 		// If no token found at all, just continue the filter chain
 		if (token == null) {
 			filterChain.doFilter(request, response);
 			return;
 		}
-		
+
 		// Check if token is blacklisted
 		if (tokenBlacklistService.isTokenBlacklisted(token)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -87,7 +83,7 @@ public class JwtFilter extends OncePerRequestFilter {
 			response.getWriter().write("{\"error\":\"Token is invalid or logged out\"}");
 			return; // Stop filter chain
 		}
-		
+
 		// Extract userId from token
 		try {
 			userId = jwtUtil.extractUsername(token);
@@ -98,33 +94,30 @@ public class JwtFilter extends OncePerRequestFilter {
 			response.getWriter().write("{\"error\":\"Invalid token\"}");
 			return;
 		}
-		
+
 		// Validate token and set authentication
 		if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			try {
 				UserDetails userDetails = customUserDetailsService.loadUserByUsername(userId);
-				
+
 				if (jwtUtil.validateToken(token, userId)) {
-					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-						userDetails,
-						null, 
-						userDetails.getAuthorities()
-					);
+					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
+							null, userDetails.getAuthorities());
 					authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 					SecurityContextHolder.getContext().setAuthentication(authToken);
-				}else {
+				} else {
 					SecurityContextHolder.clearContext();
-				    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				    response.setContentType("application/json");
-				    response.getWriter().write("{\"error\":\"Token expired\"}");
-				    return;
+					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					response.setContentType("application/json");
+					response.getWriter().write("{\"error\":\"Token expired\"}");
+					return;
 				}
 			} catch (Exception e) {
 				logger.error("Error during authentication: " + e.getMessage());
 				// Don't return error here, just continue without authentication
 			}
 		}
-		
+
 		filterChain.doFilter(request, response); // Pass to next filter
 	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -49,7 +50,7 @@ public class UserController {
 
 		boolean existingUser = userService.getUserByEmail(request.getEmail());
 		if (existingUser)
-			return ResponseEntity.badRequest().body(Map.of("message", "User already exists with this email"));
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "User already exists with this email"));
 
 		try {
 			userService.saveUser(request);

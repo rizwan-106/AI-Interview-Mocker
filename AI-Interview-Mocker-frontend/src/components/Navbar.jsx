@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { LogOut, User2, Menu, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { VITE_API_BASE_URL } from "@/utils/utils";
+import { API_BASE_URL } from "@/utils/utils";
 import { toast } from "sonner";
 import axios from "axios";
 import { setUser } from "@/redux/slices/authSlice";
@@ -18,7 +18,7 @@ const Navbar = () => {
 
   const logoutHandler = async () => {
     try {
-      const res = await axios.post(`${VITE_API_BASE_URL}/user/logout`,{}, {
+      const res = await axios.post(`${API_BASE_URL}/user/logout`,{}, {
         withCredentials: true,
       });
       if (res.data.success) {

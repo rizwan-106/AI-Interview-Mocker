@@ -21,7 +21,7 @@ import Webcam from "react-webcam";
 import { useDispatch, useSelector } from "react-redux";
 import genAI from "@/utils/genAi";
 import { useNavigate, useParams } from "react-router-dom";
-import { VITE_API_BASE_URL, VITE_EYE_FACE_BE_API } from "@/utils/utils";
+import { API_BASE_URL, EYE_FACE_BE_API } from "@/utils/utils";
 import axios from "axios";
 import { setInterviewResult } from "@/redux/slices/interviewSlice";
 import usegetAllUserInterviews from "@/hooks/usegetAllUserInterviews";
@@ -168,7 +168,7 @@ const InterviewActivePage = () => {
 
     try {
       const res = await axios.post(
-        `${VITE_API_BASE_URL}/interview/updateFeedbackAndRating`,
+        `${API_BASE_URL}/interview/updateFeedbackAndRating`,
         { interviewId: params.id, intResult },
         {
           headers: { "Content-Type": "application/json" },
@@ -215,7 +215,7 @@ const InterviewActivePage = () => {
 
     socketRef.current = io(
       // "https://eye-face-detection-microservice.onrender.com"
-      VITE_EYE_FACE_BE_API);
+      EYE_FACE_BE_API);
 
     setFocusedFrames(0);
     setTotalFrames(0);

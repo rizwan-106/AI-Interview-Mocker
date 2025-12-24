@@ -36,6 +36,4 @@ public class InterviewRequest {
     @NotNull(message = "Questions list cannot be null")
     private List<String> questions;
 
-    // ⚠️ User ko yaha frontend se bhejne ki zarurat nahi
-    // kyunki JWT se backend me extract hoga
 }

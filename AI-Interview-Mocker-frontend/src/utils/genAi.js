@@ -1,10 +1,10 @@
 import { GoogleGenAI } from "@google/genai";
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY1;
+import { GEMINI_API_KEY } from "./utils";
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 async function genAI(prompt) {
-  // const prompt = `jobTitle: ${jobTitle}, company: ${company}, jobDescription: ${jobDescription}, skills: ${skills}, difficultyLevel: ${difficulty}, experience: ${experience}. Based on this information, generate five interview questions and answers in JSON format. Use fields "question" and "answer".`;
+  
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-lite",

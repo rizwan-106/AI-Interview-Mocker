@@ -1,8 +1,8 @@
 import { setAllUserInterviews } from '@/redux/slices/interviewSlice';
 import axios from 'axios';
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { VITE_API_BASE_URL } from '@/utils/utils';
+import { useDispatch } from 'react-redux';
+import { API_BASE_URL } from '@/utils/utils';
 
 const usegetAllUserInterviews = (interviewResult) => {
   const dispatch = useDispatch();
@@ -11,7 +11,7 @@ const usegetAllUserInterviews = (interviewResult) => {
     const getAllUserInterviews = async () => {
       try {
         const res = await axios.get(
-          `${VITE_API_BASE_URL}/interview/getUserInterviews`,
+          `${API_BASE_URL}/interview/getUserInterviews`,
           { withCredentials: true }
         );
         if (res.data.success) {

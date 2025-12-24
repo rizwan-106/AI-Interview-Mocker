@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.coyote.BadRequestException;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
@@ -29,42 +30,36 @@ public class InterviewService {
 
 	}
 
-	public InterviewResponse createInterview(InterviewRequest request, String userId) {
-
+	public InterviewResponse createInterview(InterviewRequest request, String userId) throws BadRequestException {
+		ObjectId id;
 		try {
-			ObjectId id = new ObjectId(userId);
-			Optional<User> userOptional = userRepo.findById(id);
-
-			if (userOptional.isEmpty())
-				throw new NoSuchElementException("User not found with id: " + id);
-
-			User user = userOptional.get();
-
-			// into Entity
-			Interview interview = InterviewMapper.toEntity(request, user);
-
-			Interview saveInterview = interviewRepo.save(interview);
-
-			// into Response
-			InterviewResponse resp = InterviewMapper.toResponse(saveInterview);
-			return resp;
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create interview: " + e.getMessage());
+			id = new ObjectId(userId);
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException("Invalid user id");
 		}
+
+		User user = userRepo.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
+
+		Interview interview = InterviewMapper.toEntity(request, user);
+
+		Interview saved = interviewRepo.save(interview);
+
+		return InterviewMapper.toResponse(saved);
+
 	}
 
 	public List<InterviewResponse> getUserInterviews(String userId) {
 		try {
 			ObjectId userObjectId = new ObjectId(userId);
-	        // ADD THIS DEBUG LOG
+			// ADD THIS DEBUG LOG
 //	        System.out.println("Searching interviews for userId: " + userObjectId);
-	        
+
 			// Find interviews by userId, sorted by createdAt descending
 			List<Interview> interviews = interviewRepo.findByUserIdOrderByCreatedAtDesc(userObjectId);
 
-			 // ADD THIS DEBUG LOG  
+			// ADD THIS DEBUG LOG
 //	        System.out.println("Found " + interviews.size() + " interviews");
-	        
+
 			// Convert entities to response DTOs
 			return interviews.stream().map(InterviewMapper::toResponse).collect(Collectors.toList());
 

@@ -8,7 +8,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { setUser } from "@/redux/slices/authSlice";
-import { VITE_API_BASE_URL } from "@/utils/utils";
+import { API_BASE_URL } from "@/utils/utils";
 
 
 
@@ -48,7 +48,7 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${VITE_API_BASE_URL}/user/signin`, input, {
+      const res = await axios.post(`${API_BASE_URL}/user/signin`, input, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
@@ -71,7 +71,7 @@ const Login = () => {
         {/* Form Container with Header Inside */}
         <div className="bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden">
           {/* Header Section */}
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-8 text-center">
+          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-6 text-center">
             <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
             <p className="text-emerald-100">
               Log in to your InterviewMocker account
@@ -79,14 +79,14 @@ const Login = () => {
           </div>
 
           {/* Form Section */}
-          <div className="p-8">
+          <div className="p-6">
             <form onSubmit={submitHandler} className="space-y-5">
               {/* Full Name */}
 
               {/* Email */}
               <div className="space-y-2">
                 <Label className="text-slate-700 font-medium text-sm">
-                  Email Address
+                  Email Address <sup className="text-red-500 mt-3">*</sup>
                 </Label>
                 <Input
                   type="email"
@@ -101,14 +101,14 @@ const Login = () => {
               {/* Password */}
               <div className="space-y-2">
                 <Label className="text-slate-700 font-medium text-sm">
-                  Password
+                  Password <sup className="text-red-500 mt-3">*</sup>
                 </Label>
                 <Input
                   type="password"
                   value={input.password}
                   name="password"
                   onChange={changeEventHandler}
-                  placeholder="Create a strong password"
+                  placeholder="Enter your password"
                   className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-lg h-11 transition-all duration-200 bg-slate-50 focus:bg-white"
                 />
               </div>
@@ -126,7 +126,7 @@ const Login = () => {
                 ) : (
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+                    className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] cursor-pointer"
                   >
                     Log In
                   </Button>

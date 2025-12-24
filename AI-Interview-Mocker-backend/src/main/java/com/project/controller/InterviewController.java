@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,7 +26,8 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/interview")
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class InterviewController {
 
 	private final InterviewService interviewService;
@@ -35,37 +37,21 @@ public class InterviewController {
 	}
 
 	@PostMapping("/registerInterview")
-	public ResponseEntity<Map<String, Object>> registerInterview(
-	        @Valid @RequestBody InterviewRequest request,
-	        Authentication authentication) {
-	    try {
-	        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-	        String userId = userDetails.getUserId();
+	public ResponseEntity<Map<String, Object>> registerInterview(@Valid @RequestBody InterviewRequest request,
+			Authentication authentication) throws BadRequestException {
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-	        InterviewResponse interviewResp = interviewService.createInterview(request, userId);
+		InterviewResponse interviewResp = interviewService.createInterview(request, userDetails.getUserId());
 
-	        // Build Node.js-style response
-	        Map<String, Object> responseBody = new HashMap<>();
-	        responseBody.put("success", true);
-	        responseBody.put("message", "Interview created successfully");
-	        responseBody.put("interview", interviewResp);
-
-	        return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
-	    } catch (Exception e) {
-	        Map<String, Object> errorBody = new HashMap<>();
-	        errorBody.put("success", false);
-	        errorBody.put("message", "Server Error: " + e.getMessage());
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorBody);
-	    }
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(Map.of("success", true, "message", "Interview created successfully", "interview", interviewResp));
 	}
 
-	
 	@GetMapping("/getUserInterviews")
 	public ResponseEntity<?> getUserInterviews(Authentication authentication) {
 		try {
 			CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 			String userId = userDetails.getUserId();
-	        
 
 			List<InterviewResponse> interviews = interviewService.getUserInterviews(userId);
 //			System.out.println(interviews);
@@ -86,8 +72,7 @@ public class InterviewController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 		}
 	}
-	
-	
+
 	// Add this to your InterviewController class
 	@PostMapping("/updateFeedbackAndRating")
 	public ResponseEntity<?> updateFeedbackAndRating(@Valid @RequestBody UpdateFeedbackRequest request,
@@ -122,7 +107,5 @@ public class InterviewController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 		}
 	}
-
-	
 
 }

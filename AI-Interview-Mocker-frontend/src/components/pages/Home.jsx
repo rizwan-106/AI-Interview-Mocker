@@ -146,24 +146,10 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      {/* <section className="py-16 bg-white">
-        <div className="max-w-10/12 mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl sm:text-4xl font-bold text-emerald-600 mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-slate-600 font-medium">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
+      
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-b from-white to-slate-50">
+      <section className="py-8 bg-gradient-to-b from-white to-slate-50">
         <div className="max-w-10/12 mx-auto px-4">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-emerald-100 text-emerald-700 border-emerald-200">
@@ -203,7 +189,7 @@ const Home = () => {
       </section>
 
       {/* How It Works Section */}
-      <section ref={sectionRef} className="py-20 bg-white">
+      <section ref={sectionRef} className="py-12 bg-white">
         <div className="max-w-10/12 mx-auto px-4">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-teal-100 text-teal-700 border-teal-200">
@@ -259,7 +245,7 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
+      <section className="py-12 bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-10/12 mx-auto px-4">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-amber-100 text-amber-700 border-amber-200">
@@ -302,6 +288,22 @@ const Home = () => {
                   </p>
                 </CardContent>
               </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-6 bg-white">
+        <div className="max-w-10/12 mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-emerald-600 mb-2">
+                  {stat.number}
+                </div>
+                <div className="text-slate-600 font-medium">{stat.label}</div>
+              </div>
             ))}
           </div>
         </div>

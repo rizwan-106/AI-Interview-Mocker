@@ -7,7 +7,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 
 import { Button } from "../ui/button";
-import { VITE_API_BASE_URL } from "@/utils/utils";
+import { API_BASE_URL } from "@/utils/utils";
 
 
 
@@ -46,11 +46,11 @@ const Signup = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${VITE_API_BASE_URL}/user/signup`, formData, {
+      const res = await axios.post(`${API_BASE_URL}/user/signup`, formData, {
         headers: { "Content-Type": 'multipart/form-data' },
         withCredentials: true,
       });
-      if (res.status === '201' || res.status === 201) {
+      if (res.status === 201) {
         navigate('/login');
         toast.success(res.data.message);
       }
@@ -76,10 +76,10 @@ const Signup = () => {
           </div>
 
           {/* Form Section */}
-          <div className="p-8">
-            <form onSubmit={submitHandler} className="space-y-5">
+          <div className="p-6">
+            <form onSubmit={submitHandler} className="space-y-4">
               {/* Full Name */}
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label className="text-slate-700 font-medium text-sm">
                   Full Name<sup className="text-red-500 mt-3">*</sup>
                 </Label>
@@ -162,7 +162,7 @@ const Signup = () => {
                   accept="image/*"
                   type="file"
                   onChange={changeFileHandler}
-                  className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-lg h-11 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-all duration-200 bg-slate-50"
+                  className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-lg h-10 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-all duration-200 bg-slate-50"
                 />
               </div>
 
@@ -179,7 +179,7 @@ const Signup = () => {
                 ) : (
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+                    className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] cursor-pointer"
                   >
                     Create Account
                   </Button>

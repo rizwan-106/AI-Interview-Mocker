@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   PlayCircle,
   Camera,
@@ -12,20 +11,19 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import Webcam from "react-webcam";
 import { useSelector } from "react-redux";
 
 const InterviewInstructios = () => {
   const [cameraEnabled, setCameraEnabled] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
-  
-  const {singleInterview} = useSelector(store=>store.interview); 
+
+  const { singleInterview } = useSelector(store => store.interview);
 
   const navigate = useNavigate();
   const enableCamera = async () => {
     try {
-      setCameraEnabled(true);
+      setCameraEnabled(!cameraEnabled);
       // In real app, you'd request camera permission here
       // const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     } catch (error) {
@@ -41,10 +39,7 @@ const InterviewInstructios = () => {
     setTimeout(() => {
       setIsStarting(false);
       navigate(`/interview/${params.id}/init`);
-    },300);
-
-
-    
+    }, 300);
   };
 
   return (
@@ -114,17 +109,15 @@ const InterviewInstructios = () => {
                           Information
                         </h3>
                         <p className="text-amber-700 leading-relaxed">
-                          Enable Video Web Cam and Microphone to Start your AI
-                          Generated Mock Interview. It Has{" "}
-                          {singleInterview.questions.length} question which you
-                          can answer and at the last you will get the report on
-                          the basis of your answer.
+                          Enable your webcam and microphone to start your AI-generated mock interview.
+                          It includes {singleInterview.questions.length} questions that you can answer,
+                          and at the end you will receive a report based on your responses.
+                          <br />
                           <span className="font-semibold">
-                            NOTE: We never record your video
+                            {" "}NOTE: We never record your video.
                           </span>
-                          , Web cam access you can disable at any time if you
-                          want.
                         </p>
+
                       </div>
                     </div>
                   </CardContent>
@@ -165,11 +158,10 @@ const InterviewInstructios = () => {
                   <Button
                     onClick={enableCamera}
                     variant={cameraEnabled ? "default" : "outline"}
-                    className={`cursor-pointer flex items-center gap-2 px-6 py-3 ${
-                      cameraEnabled
+                    className={`cursor-pointer flex items-center gap-2 px-6 py-3 ${cameraEnabled
                         ? "bg-emerald-600 text-white hover:bg-emerald-700"
                         : "border-slate-300 text-slate-700 hover:bg-slate-50"
-                    }`}
+                      }`}
                   >
                     <Camera className="h-4 w-4" />
                     {cameraEnabled ? "Camera Enabled" : "Enable Camera"}
@@ -180,9 +172,8 @@ const InterviewInstructios = () => {
                   <div className="flex justify-center gap-4 text-sm mt-3">
                     <div className="flex items-center gap-2">
                       <div
-                        className={`w-2 h-2 rounded-full ${
-                          cameraEnabled ? "bg-emerald-500" : "bg-slate-300"
-                        }`}
+                        className={`w-2 h-2 rounded-full ${cameraEnabled ? "bg-emerald-500" : "bg-slate-300"
+                          }`}
                       />
                       <span
                         className={

@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +34,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class UserService {
+
+	@Value("${SET_SECURE_VALUE:false}")
+	private boolean secureValue;
 
 	private final Cloudinary cloudinary;
 	private final UserRepository userRepo;
@@ -70,7 +74,7 @@ public class UserService {
 		// 2. Get image url from cloudinary
 		String imageUrl = uploadResult.get("secure_url").toString();
 		User.Profile profile = User.Profile.builder().profilePhoto(imageUrl).build();
-		
+
 		User user = User.builder().fullName(request.getFullName()).email(request.getEmail())
 				.password(passwordEncoder.encode(request.getPassword())).phoneNumber(request.getPhoneNumber())
 				.createdAt(Instant.now()).updatedAt(Instant.now()).profile(profile).build();
@@ -88,40 +92,40 @@ public class UserService {
 		try {
 			Authentication authenticate = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-			if (authenticate.isAuthenticated()) {
-				String tokenValue = jwtUtil.generateToken(request.getEmail());
 
-				Optional<User> optionalUser = userRepo.findUserByEmail(request.getEmail());
-				if (optionalUser.isEmpty()) {
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-							.body(Map.of("message", "Incorrect email", "success", false));
-				}
-				User user = optionalUser.get();
+			CustomUserDetails userDetails = (CustomUserDetails) authenticate.getPrincipal();
+			User user = userDetails.getUser();
 
-				Cookie cookie = new Cookie("token", tokenValue);
-				cookie.setHttpOnly(true);
-				cookie.setSecure(false); // 🚨 prod me true karna (https)
-				cookie.setPath("/");
-				cookie.setMaxAge(24 * 60 * 60);
-				response.addCookie(cookie);
+			// subject is email
+			String tokenValue = jwtUtil.generateToken(user.getEmail());
 
-				Map<String, Object> userData = new HashMap<>();
-				userData.put("_id", user.getId());
-				userData.put("fullname", user.getFullName());
-				userData.put("email", user.getEmail());
-				userData.put("phoneNumber", user.getPhoneNumber());
-				userData.put("profile", user.getProfile());
+			Cookie cookie = new Cookie("token", tokenValue);
+			cookie.setHttpOnly(true);
+			cookie.setSecure(secureValue); // 🚨 prod me true karna (https)
+			cookie.setAttribute("SameSite", "Strict");
+			cookie.setPath("/");
+			cookie.setMaxAge(24 * 60 * 60);
+			response.addCookie(cookie);
 
-				Map<String, Object> responseBody = new HashMap<>();
-				responseBody.put("message", "Welcome back, " + user.getFullName());
-				responseBody.put("user", userData);
-				responseBody.put("success", true);
-				return ResponseEntity.ok(responseBody);
-			} else {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-						.body(Map.of("message", "Invalid credentials!", "success", false));
-			}
-		} catch (Exception e) {
+			// Prepare response Data
+			Map<String, Object> userData = new HashMap<>();
+			userData.put("_id", user.getId());
+			userData.put("fullname", user.getFullName());
+			userData.put("email", user.getEmail());
+			userData.put("phoneNumber", user.getPhoneNumber());
+			userData.put("profile", user.getProfile());
+
+			return ResponseEntity
+					.ok(Map.of("message", "Welcome back, " + user.getFullName(), "user", userData, "success", true));
+
+		}
+
+		catch (BadCredentialsException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(Map.of("message", "Invalid email or password", "success", false));
+		}
+
+		catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(Map.of("message", "Internal Server Error", "success", false));

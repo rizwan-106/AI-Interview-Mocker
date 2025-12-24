@@ -33,7 +33,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setQuestions, setSingleInterview } from "@/redux/slices/interviewSlice";
-import { VITE_API_BASE_URL } from "@/utils/utils";
+import { API_BASE_URL } from "@/utils/utils";
 
 const InterviewSetupPage = () => {
   const navigate = useNavigate();
@@ -70,11 +70,12 @@ Ensure questions are practical, relevant to the job title and description, and c
       const data = await genAI(prompt);
       const questionsArray = data.map((item) => item.question);
       // const answersArray = data.map((item) => item.answer);
-      const postData = { ...formData, questions: questionsArray };
+      const questionData = { ...formData, questions: questionsArray };
+
       try {
         const res = await axios.post(
-          `${VITE_API_BASE_URL}/interview/registerInterview`,
-          postData,
+          `${API_BASE_URL}/interview/registerInterview`,
+          questionData,
           {
             headers: {
               "Content-Type": "application/json",
@@ -83,7 +84,7 @@ Ensure questions are practical, relevant to the job title and description, and c
           }
         );
         // if (res.data.success) {
-        if(res.status==='201'|| res.status===201) {
+        if(res.status===201) {
           dispatch((setQuestions(questionsArray)));
           dispatch(setSingleInterview(res.data.interview));
           navigate(`/interview/${res.data.interview.id}`);
@@ -175,13 +176,13 @@ Ensure questions are practical, relevant to the job title and description, and c
       </div>
 
       {/* Main Content */}
-      <div className="py-20 bg-gradient-to-b from-white to-slate-50">
+      <div className="py-16 bg-gradient-to-b from-white to-slate-50">
         <div className="max-w-10/12 mx-auto">
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Form Section */}
             <div className="lg:col-span-2">
               <Card className="bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden">
-                <CardHeader className="bg-gradient-to-r from-slate-50 to-white p-8">
+                <CardHeader className="bg-gradient-to-r from-slate-50 to-white py-4 ">
                   <CardTitle className="text-2xl font-bold text-slate-800 flex items-center gap-2">
                     <Target className="h-6 w-6 text-emerald-600" />
                     Interview Configuration
@@ -191,12 +192,12 @@ Ensure questions are practical, relevant to the job title and description, and c
                   </CardDescription>
                 </CardHeader>
 
-                <CardContent className="p-8">
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                <CardContent className="py-2 ">
+                  <form onSubmit={handleSubmit} className="space-y-6 ">
                     {/* Job Information */}
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold text-slate-700 flex items-center gap-2">
-                        <Users className="h-5 w-5 text-emerald-600" />
+                        <Users className="h-5 w-5 text-emerald-600 " />
                         Job Information
                       </h3>
 
@@ -395,15 +396,15 @@ Ensure questions are practical, relevant to the job title and description, and c
               </Card>
             </div>
             {/* Features Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-4">
               <Card className="bg-white border border-slate-200 rounded-2xl shadow-lg">
-                <CardHeader className="p-6">
+                <CardHeader className="px-4">
                   <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
                     <CheckCircle className="h-5 w-5 text-emerald-600" />
                     What to Expect
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 pt-0 space-y-4">
+                <CardContent className="p-2 pt-0 space-y-0">
                   {features.map((feature, index) => (
                     <div
                       key={index}
@@ -423,8 +424,8 @@ Ensure questions are practical, relevant to the job title and description, and c
                 </CardContent>
               </Card>
               <Card className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="text-center space-y-3">
+                <CardContent className="p-2">
+                  <div className="text-center space-y-2">
                     <h3 className="text-lg font-semibold">Pro Tips</h3>
                     <ul className="text-sm text-emerald-100 space-y-2 text-left">
                       <li>• Be specific about your skills and experience</li>
